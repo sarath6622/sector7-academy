@@ -42,7 +42,10 @@ model Application {
   preferredBatch String?
   message        String?
   status         ApplicationStatus @default(NEW)
+  // Internal admin notes (not visible to the applicant).
+  notes          String?
   createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
   @@index([status])
   @@index([createdAt])

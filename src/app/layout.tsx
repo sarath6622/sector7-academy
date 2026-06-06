@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/layout/Analytics";
 import { jsonLd, educationalOrgJsonLd } from "@/lib/seo";
 import { SITE } from "@/lib/site";
@@ -56,12 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: orgLd }} />
-        <a href="#main-content" className="skip-to-content">
-          Skip to main content
-        </a>
-        <Navbar />
-        <main id="main-content">{children}</main>
-        <Footer />
+        {children}
         <GoogleAnalytics />
         <MicrosoftClarity />
       </body>
