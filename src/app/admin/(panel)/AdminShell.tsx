@@ -86,8 +86,10 @@ export function AdminShell({ userName, children }: { userName: string; children:
         </div>
       </aside>
 
-      {/* Main column */}
-      <div className="min-w-0 flex-1">
+      {/* Main column. overflow-x-clip prevents stray few-px horizontal page
+          overflow without creating a scroll container (so the sticky top bar
+          and the tables' own overflow-x-auto keep working). */}
+      <div className="min-w-0 flex-1 overflow-x-clip">
         {/* Mobile top bar */}
         <div className="sticky top-0 z-40 flex items-center gap-3 border-b border-border bg-bg-secondary/95 px-4 py-3 backdrop-blur lg:hidden">
           <button
