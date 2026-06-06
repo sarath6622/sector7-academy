@@ -6,14 +6,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { applicationSchema, EXPERIENCE_OPTIONS, type ApplicationInput } from "@/lib/applicationSchema";
-import { COURSES } from "@/data/courses";
+
+type CourseOption = { slug: string; title: string };
 
 const inputCls =
   "w-full rounded-lg border border-border bg-bg-primary px-4 py-3 text-sm text-white placeholder:text-muted focus:border-accent focus:outline-none";
 const labelCls = "mb-1.5 block font-body text-xs font-semibold uppercase tracking-wider text-white/80";
 const errCls = "mt-1 text-xs text-accent";
 
-export function ApplyForm({ defaultCourse }: { defaultCourse?: string }) {
+export function ApplyForm({
+  defaultCourse,
+  courses,
+}: {
+  defaultCourse?: string;
+  courses: CourseOption[];
+}) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -25,7 +32,7 @@ export function ApplyForm({ defaultCourse }: { defaultCourse?: string }) {
   } = useForm<ApplicationInput>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
-      courseSlug: defaultCourse && COURSES.some((c) => c.slug === defaultCourse) ? defaultCourse : "",
+      courseSlug: defaultCourse && courses.some((c) => c.slug === defaultCourse) ? defaultCourse : "",
       _hp: "",
     },
   });
@@ -121,7 +128,7 @@ export function ApplyForm({ defaultCourse }: { defaultCourse?: string }) {
           </label>
           <select id="courseSlug" className={inputCls} {...register("courseSlug")}>
             <option value="">Select a course</option>
-            {COURSES.map((c) => (
+            {courses.map((c) => (
               <option key={c.slug} value={c.slug}>
                 {c.title}
               </option>

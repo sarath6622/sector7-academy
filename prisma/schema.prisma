@@ -77,6 +77,7 @@ model Course {
   slug          String         @unique
   title         String
   level         String
+  levelLabel    String         @default("")
   category      String
   summary       String
   description   String
@@ -85,6 +86,8 @@ model Course {
   price         String?
   eligibility   String?
   certification String?
+  outcomes      String[]       @default([])
+  featured      Boolean        @default(false)
   isPublished   Boolean        @default(false)
   sortOrder     Int            @default(0)
   createdAt     DateTime       @default(now())

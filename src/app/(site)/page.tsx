@@ -14,9 +14,11 @@ import { Badge } from "@/components/ui/Badge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CourseCard } from "@/components/ui/CourseCard";
 import { CTABand } from "@/components/ui/CTABand";
-import { getFeaturedCourses } from "@/data/courses";
+import { getFeaturedCourses } from "@/lib/queries/courses";
 import { TESTIMONIALS } from "@/data/testimonials";
 import { ACCREDITATION_STATUS, SITE } from "@/lib/site";
+
+export const revalidate = 60;
 
 const HIGHLIGHTS = [
   {
@@ -41,8 +43,8 @@ const HIGHLIGHTS = [
   },
 ];
 
-export default function HomePage() {
-  const featured = getFeaturedCourses();
+export default async function HomePage() {
+  const featured = await getFeaturedCourses();
 
   return (
     <>

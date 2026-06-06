@@ -4,13 +4,16 @@ import Link from "next/link";
 import { Clock, Award, CheckCircle2, ArrowRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { COURSES, getCourse } from "@/data/courses";
+import { getPublishedCourseBySlug, getAllCourseSlugs } from "@/lib/queries/courses";
 import { getFacultyForCourse } from "@/data/faculty";
 import { buildMetadata, courseJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { SITE, ACCREDITATION_STATUS } from "@/lib/site";
 
-export function generateStaticParams() {
-  return COURSES.map((c) => ({ slug: c.slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getAllCourseSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -19,7 +22,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getPublishedCourseBySlug(slug);
   if (!course) return buildMetadata({ title: "Course not found", description: "", path: `/courses/${slug}` });
   return buildMetadata({
     title: course.title,
@@ -35,7 +38,7 @@ export default async function CourseDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getPublishedCourseBySlug(slug);
   if (!course) notFound();
 
   const faculty = getFacultyForCourse(course.slug);

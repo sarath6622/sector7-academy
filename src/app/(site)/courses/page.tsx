@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { CourseCard } from "@/components/ui/CourseCard";
 import { CTABand } from "@/components/ui/CTABand";
-import { COURSES } from "@/data/courses";
+import { getPublishedCourses } from "@/lib/queries/courses";
 import { buildMetadata, jsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { SITE } from "@/lib/site";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
   title: "Courses",
@@ -20,12 +22,13 @@ export const metadata: Metadata = buildMetadata({
   ],
 });
 
-export default function CoursesPage() {
-  const certification = COURSES.filter((c) => c.category === "certification");
-  const nutrition = COURSES.filter((c) => c.category === "nutrition");
+export default async function CoursesPage() {
+  const courses = await getPublishedCourses();
+  const certification = courses.filter((c) => c.category === "certification");
+  const nutrition = courses.filter((c) => c.category === "nutrition");
 
   const itemListLd = jsonLd("ItemList", {
-    itemListElement: COURSES.map((c, i) => ({
+    itemListElement: courses.map((c, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: c.title,

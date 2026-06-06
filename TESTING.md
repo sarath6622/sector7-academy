@@ -37,10 +37,11 @@ docker start s7-academy-pg
 # 2. Install dependencies (first time only)
 npm install
 
-# 3. Sync the schema + create the admin login
+# 3. Sync the schema + create the admin login + import the course catalog
 #    (first time, or after recreating the database)
 npm run db:push
-npm run db:seed
+npm run db:seed          # creates the admin user
+npm run db:seed-content  # imports the courses from src/data into the DB
 
 # 4. Start the app
 npm run dev
@@ -81,6 +82,17 @@ Then open **http://localhost:3000**.
 ### 4. Confirm access is protected
 - Open an **incognito window** → go to **http://localhost:3000/admin**
 - You should be redirected to the login page.
+
+### 5. Manage courses (content)
+- In the admin, click **Courses** in the sidebar.
+- **Edit** a course → change the summary → **Save changes**. Within ~60s (or
+  immediately in dev) the public **/courses** and course page reflect it.
+- **New course** → fill the form → Create. New published courses appear on the
+  public catalog and in the apply-form dropdown.
+- Use the **eye** icon to publish/unpublish (drafts are hidden publicly), and
+  the **trash** icon to delete.
+- Course content lives in Postgres now; `src/data/courses.ts` is only a fallback
+  used when the DB is empty/unavailable.
 
 ---
 

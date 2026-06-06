@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { CheckCircle2 } from "lucide-react";
 import { PageHero } from "@/components/ui/PageHero";
 import { ApplyForm } from "@/components/forms/ApplyForm";
+import { getPublishedCourses } from "@/lib/queries/courses";
 import { buildMetadata, breadcrumbJsonLd } from "@/lib/seo";
 import { SITE, ACCREDITATION_STATUS } from "@/lib/site";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
   title: "Apply",
@@ -18,6 +21,7 @@ export default async function ApplyPage({
   searchParams: Promise<{ course?: string }>;
 }) {
   const { course } = await searchParams;
+  const courses = (await getPublishedCourses()).map((c) => ({ slug: c.slug, title: c.title }));
 
   return (
     <>
@@ -40,7 +44,7 @@ export default async function ApplyPage({
       <section className="section-y">
         <div className="container-px mx-auto grid max-w-6xl gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <ApplyForm defaultCourse={course} />
+            <ApplyForm defaultCourse={course} courses={courses} />
           </div>
 
           <aside className="lg:col-span-1">
