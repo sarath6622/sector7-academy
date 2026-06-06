@@ -1,0 +1,176 @@
+// ─── S7 Academy — Prisma schema ─────────────────────────────────────────────
+// Phase 1 uses ONLY the `Application` model (to durably capture leads from the
+// public application form). Everything else below is the DESIGNED data model
+// per the PRD (§8): role-based auth + course/faculty/student management that
+// the Phase 2 admin panel and Phase 3 student portal will build on.
+//
+// Run `npm run db:generate` after editing. `npm run db:push` to sync a database.
+// The site runs fine WITHOUT a database (DATABASE_URL empty) — the apply route
+// degrades gracefully and still sends email.
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Phase 1: live ────────────────────────────────────────────────────────────
+
+enum ApplicationStatus {
+  NEW
+  CONTACTED
+  ENROLLED
+  REJECTED
+}
+
+model Application {
+  id             String            @id @default(cuid())
+  applicantName  String
+  email          String
+  phone          String
+  city           String?
+  // Stored as the course slug at submission time (course catalog is code-seeded
+  // in Phase 1; becomes a relation in Phase 2 — see Course below).
+  courseSlug     String?
+  preferredLevel String?
+  experience     String?
+  preferredBatch String?
+  message        String?
+  status         ApplicationStatus @default(NEW)
+  createdAt      DateTime          @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ── Phase 2/3: designed now, built later (role-based auth, content, students) ─
+
+enum Role {
+  ADMIN
+  STAFF
+  STUDENT
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(STUDENT)
+  name         String?
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  student      Student?
+}
+
+model Course {
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  title         String
+  level         String
+  category      String
+  summary       String
+  description   String
+  duration      String?
+  format        String?
+  price         String?
+  eligibility   String?
+  certification String?
+  isPublished   Boolean        @default(false)
+  sortOrder     Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  modules       CourseModule[]
+  faculty       CourseFaculty[]
+  batches       Batch[]
+}
+
+model CourseModule {
+  id          String  @id @default(cuid())
+  courseId    String
+  title       String
+  description String?
+  sortOrder   Int     @default(0)
+  course      Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+}
+
+enum FacultyRoleType {
+  TUTOR
+  ASSESSOR
+  IQA // Internal Quality Assessor
+  AUTHOR
+}
+
+model Faculty {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  name        String
+  bio         String
+  photoUrl    String?
+  isPublished Boolean         @default(true)
+  sortOrder   Int             @default(0)
+
+  roles       FacultyRole[]
+  courses     CourseFaculty[]
+}
+
+model FacultyRole {
+  id        String          @id @default(cuid())
+  facultyId String
+  role      FacultyRoleType
+  faculty   Faculty         @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+
+  @@unique([facultyId, role])
+}
+
+model CourseFaculty {
+  courseId  String
+  facultyId String
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  faculty   Faculty @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, facultyId])
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  authorName  String
+  courseSlug  String?
+  quote       String
+  photoUrl    String?
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Batch {
+  id        String   @id @default(cuid())
+  courseId  String
+  name      String
+  startDate DateTime?
+  endDate   DateTime?
+  capacity  Int?
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  students  Student[]
+
+  @@index([courseId])
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  userId    String?  @unique
+  batchId   String?
+  status    String   @default("active")
+  joinedAt  DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  batch     Batch?   @relation(fields: [batchId], references: [id])
+}
