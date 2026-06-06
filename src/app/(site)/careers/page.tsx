@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Briefcase, Users, Heart, MessagesSquare } from "lucide-react";
 import { PageHero } from "@/components/ui/PageHero";
 import { CTABand } from "@/components/ui/CTABand";
-import { TESTIMONIALS } from "@/data/testimonials";
+import { getPublishedTestimonials } from "@/lib/queries/testimonials";
 import { buildMetadata, breadcrumbJsonLd } from "@/lib/seo";
 import { SITE } from "@/lib/site";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
   title: "Careers & Placement Support",
@@ -13,7 +15,8 @@ export const metadata: Metadata = buildMetadata({
   path: "/careers",
 });
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const testimonials = await getPublishedTestimonials();
   return (
     <>
       <script
@@ -68,7 +71,7 @@ export default function CareersPage() {
           {/* Outcomes */}
           <h2 className="mt-16 text-3xl text-white">Graduate outcomes</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {TESTIMONIALS.map((t) => (
+            {testimonials.map((t) => (
               <figure key={t.authorName} className="rounded-xl border border-border bg-bg-secondary p-7">
                 <blockquote className="text-sm leading-relaxed text-white/90">“{t.quote}”</blockquote>
                 <figcaption className="mt-5 border-t border-border pt-4">

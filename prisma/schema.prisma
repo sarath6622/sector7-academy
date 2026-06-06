@@ -152,6 +152,7 @@ model Testimonial {
   authorName  String
   courseSlug  String?
   quote       String
+  outcome     String?
   photoUrl    String?
   isPublished Boolean  @default(true)
   sortOrder   Int      @default(0)

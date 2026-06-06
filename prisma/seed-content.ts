@@ -7,10 +7,20 @@
  * overwritten by the seed values, so only run this for the initial migration
  * (or to reset a course back to its seed defaults).
  */
-import { PrismaClient } from "../src/generated/prisma";
+import { PrismaClient, type FacultyRoleType } from "../src/generated/prisma";
 import { COURSES } from "../src/data/courses";
+import { FACULTY } from "../src/data/faculty";
+import { TESTIMONIALS } from "../src/data/testimonials";
 
 const prisma = new PrismaClient();
+
+/** Map the public role label to the DB enum. */
+const ROLE_TO_ENUM: Record<string, FacultyRoleType> = {
+  Tutor: "TUTOR",
+  Assessor: "ASSESSOR",
+  "Internal Quality Assessor": "IQA",
+  Author: "AUTHOR",
+};
 
 async function importCourses() {
   for (const c of COURSES) {
@@ -66,11 +76,64 @@ async function importCourses() {
   }
 }
 
+async function importFaculty() {
+  for (const [i, f] of FACULTY.entries()) {
+    const faculty = await prisma.faculty.upsert({
+      where: { slug: f.slug },
+      update: { name: f.name, bio: f.bio, photoUrl: f.photoUrl ?? null, isPublished: true, sortOrder: i },
+      create: { slug: f.slug, name: f.name, bio: f.bio, photoUrl: f.photoUrl ?? null, isPublished: true, sortOrder: i },
+    });
+
+    // Rebuild roles
+    await prisma.facultyRole.deleteMany({ where: { facultyId: faculty.id } });
+    await prisma.facultyRole.createMany({
+      data: f.roles.map((r) => ({ facultyId: faculty.id, role: ROLE_TO_ENUM[r] })),
+      skipDuplicates: true,
+    });
+
+    // Rebuild course links (skip slugs that don't resolve to a course)
+    await prisma.courseFaculty.deleteMany({ where: { facultyId: faculty.id } });
+    for (const slug of f.courses ?? []) {
+      const course = await prisma.course.findUnique({ where: { slug }, select: { id: true } });
+      if (course) {
+        await prisma.courseFaculty.create({ data: { facultyId: faculty.id, courseId: course.id } });
+      }
+    }
+
+    console.log(`  ✔ ${f.slug}`);
+  }
+}
+
+async function importTestimonials() {
+  // Testimonials have no natural key — reset and recreate from seed.
+  await prisma.testimonial.deleteMany({});
+  await prisma.testimonial.createMany({
+    data: TESTIMONIALS.map((t, i) => ({
+      authorName: t.authorName,
+      courseSlug: t.courseSlug ?? null,
+      quote: t.quote,
+      outcome: t.outcome ?? null,
+      isPublished: true,
+      sortOrder: i,
+    })),
+  });
+  console.log(`  ✔ ${TESTIMONIALS.length} testimonials`);
+}
+
 async function main() {
   console.log("Importing courses…");
   await importCourses();
-  const count = await prisma.course.count();
-  console.log(`Done. ${count} courses in the database.`);
+  console.log("Importing faculty…");
+  await importFaculty();
+  console.log("Importing testimonials…");
+  await importTestimonials();
+
+  const [courses, faculty, testimonials] = await Promise.all([
+    prisma.course.count(),
+    prisma.faculty.count(),
+    prisma.testimonial.count(),
+  ]);
+  console.log(`Done. ${courses} courses, ${faculty} faculty, ${testimonials} testimonials.`);
 }
 
 main()

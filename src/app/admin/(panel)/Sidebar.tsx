@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Inbox, BookOpen, LogOut } from "lucide-react";
+import { LayoutDashboard, Inbox, BookOpen, Users, Quote, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { doSignOut } from "../actions";
 
@@ -10,6 +10,8 @@ const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/applications", label: "Applications", icon: Inbox, exact: false },
   { href: "/admin/courses", label: "Courses", icon: BookOpen, exact: false },
+  { href: "/admin/faculty", label: "Faculty", icon: Users, exact: false },
+  { href: "/admin/testimonials", label: "Testimonials", icon: Quote, exact: false },
 ];
 
 export function Sidebar({ userName }: { userName: string }) {

@@ -15,7 +15,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CourseCard } from "@/components/ui/CourseCard";
 import { CTABand } from "@/components/ui/CTABand";
 import { getFeaturedCourses } from "@/lib/queries/courses";
-import { TESTIMONIALS } from "@/data/testimonials";
+import { getPublishedTestimonials } from "@/lib/queries/testimonials";
 import { ACCREDITATION_STATUS, SITE } from "@/lib/site";
 
 export const revalidate = 60;
@@ -45,6 +45,7 @@ const HIGHLIGHTS = [
 
 export default async function HomePage() {
   const featured = await getFeaturedCourses();
+  const testimonials = await getPublishedTestimonials();
 
   return (
     <>
@@ -192,7 +193,7 @@ export default async function HomePage() {
             align="center"
           />
           <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {TESTIMONIALS.map((t) => (
+            {testimonials.map((t) => (
               <figure key={t.authorName} className="rounded-xl border border-border bg-bg-secondary p-7">
                 <GraduationCap className="h-7 w-7 text-accent" />
                 <blockquote className="mt-4 text-sm leading-relaxed text-white/90">

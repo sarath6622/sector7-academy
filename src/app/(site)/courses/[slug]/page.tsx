@@ -5,7 +5,7 @@ import { Clock, Award, CheckCircle2, ArrowRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getPublishedCourseBySlug, getAllCourseSlugs } from "@/lib/queries/courses";
-import { getFacultyForCourse } from "@/data/faculty";
+import { getFacultyForCourse } from "@/lib/queries/faculty";
 import { buildMetadata, courseJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { SITE, ACCREDITATION_STATUS } from "@/lib/site";
 
@@ -41,7 +41,7 @@ export default async function CourseDetailPage({
   const course = await getPublishedCourseBySlug(slug);
   if (!course) notFound();
 
-  const faculty = getFacultyForCourse(course.slug);
+  const faculty = await getFacultyForCourse(course.slug);
   const applyHref = `/apply?course=${course.slug}`;
 
   return (

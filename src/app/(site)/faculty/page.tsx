@@ -3,10 +3,13 @@ import { User } from "lucide-react";
 import { PageHero } from "@/components/ui/PageHero";
 import { Badge } from "@/components/ui/Badge";
 import { CTABand } from "@/components/ui/CTABand";
-import { FACULTY, ROLE_DESCRIPTIONS } from "@/data/faculty";
+import { ROLE_DESCRIPTIONS } from "@/data/faculty";
+import { getPublishedFaculty } from "@/lib/queries/faculty";
 import { buildMetadata, breadcrumbJsonLd } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 import type { FacultyRoleType } from "@/types";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
   title: "Our Faculty",
@@ -17,7 +20,8 @@ export const metadata: Metadata = buildMetadata({
 
 const ROLES: FacultyRoleType[] = ["Tutor", "Assessor", "Internal Quality Assessor", "Author"];
 
-export default function FacultyPage() {
+export default async function FacultyPage() {
+  const faculty = await getPublishedFaculty();
   return (
     <>
       <script
@@ -56,7 +60,7 @@ export default function FacultyPage() {
         <div className="container-px mx-auto max-w-6xl">
           <h2 className="text-3xl text-white">Meet the team</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {FACULTY.map((f) => (
+            {faculty.map((f) => (
               <article key={f.slug} className="rounded-xl border border-border bg-bg-secondary p-6">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full border border-accent/30 bg-academy/60">
                   <User className="h-8 w-8 text-accent" />
