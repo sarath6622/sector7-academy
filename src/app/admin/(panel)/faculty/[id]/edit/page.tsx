@@ -16,7 +16,7 @@ export default async function EditFacultyPage({ params }: { params: Promise<{ id
   const courses = allCourses.map((c) => ({ slug: c.slug, title: c.title }));
 
   return (
-    <div className="px-8 py-8">
+    <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <Link href="/admin/faculty" className="inline-flex items-center gap-1 text-sm text-muted hover:text-accent">
         <ArrowLeft className="h-4 w-4" /> Back to faculty
       </Link>

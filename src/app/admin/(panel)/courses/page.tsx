@@ -10,7 +10,7 @@ export default async function AdminCoursesPage() {
   const courses = await getAllCoursesAdmin();
 
   return (
-    <div className="px-8 py-8">
+    <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <header className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-4xl text-white">Courses</h1>
@@ -33,8 +33,8 @@ export default async function AdminCoursesPage() {
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border">
-          <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full min-w-[680px] text-left text-sm">
             <thead className="bg-bg-secondary text-xs uppercase tracking-wider text-muted">
               <tr>
                 <th className="px-5 py-3 font-medium">Course</th>

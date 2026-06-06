@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { Sidebar } from "./Sidebar";
+import { AdminShell } from "./AdminShell";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s · S7 Academy Admin" },
@@ -15,10 +15,5 @@ export default async function AdminPanelLayout({ children }: { children: React.R
 
   const userName = session.user.name ?? session.user.email ?? "Admin";
 
-  return (
-    <div className="flex min-h-screen bg-bg-primary">
-      <Sidebar userName={userName} />
-      <div className="flex-1 overflow-x-hidden">{children}</div>
-    </div>
-  );
+  return <AdminShell userName={userName}>{children}</AdminShell>;
 }

@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
   for (const g of grouped) counts[g.status] = g._count._all;
 
   return (
-    <div className="px-8 py-8">
+    <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <header className="mb-8">
         <h1 className="text-4xl text-white">Dashboard</h1>
         <p className="mt-1 text-sm text-muted">{total} total applications</p>
@@ -60,8 +60,8 @@ export default async function AdminDashboard() {
             <p className="mt-3 text-sm text-muted">No applications yet.</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-border">
-            <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto rounded-xl border border-border">
+            <table className="w-full min-w-[680px] text-left text-sm">
               <thead className="bg-bg-secondary text-xs uppercase tracking-wider text-muted">
                 <tr>
                   <th className="px-5 py-3 font-medium">Applicant</th>

@@ -17,7 +17,7 @@ export default async function AdminFacultyPage() {
   const faculty = await getAllFacultyAdmin();
 
   return (
-    <div className="px-8 py-8">
+    <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <header className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-4xl text-white">Faculty</h1>
@@ -34,8 +34,8 @@ export default async function AdminFacultyPage() {
           <p className="mt-3 text-sm text-muted">No faculty yet.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border">
-          <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full min-w-[680px] text-left text-sm">
             <thead className="bg-bg-secondary text-xs uppercase tracking-wider text-muted">
               <tr>
                 <th className="px-5 py-3 font-medium">Name</th>

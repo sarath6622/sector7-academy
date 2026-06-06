@@ -31,7 +31,7 @@ export default async function ApplicationsPage({
   });
 
   return (
-    <div className="px-8 py-8">
+    <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <header className="mb-6">
         <h1 className="text-4xl text-white">Applications</h1>
         <p className="mt-1 text-sm text-muted">{applications.length} shown</p>
@@ -65,8 +65,8 @@ export default async function ApplicationsPage({
           <p className="mt-3 text-sm text-muted">No applications in this view.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border">
-          <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full min-w-[680px] text-left text-sm">
             <thead className="bg-bg-secondary text-xs uppercase tracking-wider text-muted">
               <tr>
                 <th className="px-5 py-3 font-medium">Applicant</th>

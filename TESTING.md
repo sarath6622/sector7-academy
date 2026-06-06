@@ -83,16 +83,18 @@ Then open **http://localhost:3000**.
 - Open an **incognito window** → go to **http://localhost:3000/admin**
 - You should be redirected to the login page.
 
-### 5. Manage courses (content)
-- In the admin, click **Courses** in the sidebar.
-- **Edit** a course → change the summary → **Save changes**. Within ~60s (or
-  immediately in dev) the public **/courses** and course page reflect it.
-- **New course** → fill the form → Create. New published courses appear on the
-  public catalog and in the apply-form dropdown.
-- Use the **eye** icon to publish/unpublish (drafts are hidden publicly), and
-  the **trash** icon to delete.
-- Course content lives in Postgres now; `src/data/courses.ts` is only a fallback
-  used when the DB is empty/unavailable.
+### 5. Manage content (courses, faculty, testimonials)
+The sidebar has **Courses**, **Faculty**, and **Testimonials** — all backed by Postgres.
+- **Edit** any item → change a field → **Save changes**. Within ~60s (or
+  immediately in dev) the matching public page reflects it.
+- **New** → fill the form → Create. New *published* items appear publicly
+  (courses also appear in the apply-form dropdown).
+- The **eye** icon publishes/unpublishes (drafts are hidden publicly); the
+  **trash** icon deletes.
+- Faculty edits show on **/faculty** and on the course-detail "taught &
+  assessed by" section; testimonials show on the **homepage** and **/careers**.
+- All this content lives in Postgres now; the `src/data/*` files are only a
+  fallback used when the DB is empty/unavailable.
 
 ---
 
